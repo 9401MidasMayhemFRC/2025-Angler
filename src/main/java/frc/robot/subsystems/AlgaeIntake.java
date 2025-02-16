@@ -19,6 +19,8 @@ public class AlgaeIntake extends SubsystemBase {
 
     private TalonFX m_motor = new TalonFX(11);
 
+    private AlgaeIntakeWrist m_wrist = new AlgaeIntakeWrist();
+
     private double m_velo = 0.0;
     private boolean m_enabled = false;
 

@@ -19,11 +19,18 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
+
+import frc.robot.subsystems.*;
+
+import frc.robot.commands.*;
 
 public class RobotContainer {
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+
+    //--------------------------------------------Swerve---------------------------------------------------------------------------------
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed aka 4.87 mps
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+
+    private double SlewRate;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -35,10 +42,22 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
+    //-----------------------------------------------------------------------------------------------------------------------------
 
+    //-------------------------------------------Controllers-----------------------------------------------------------------------
     private final CommandXboxController m_driverController = new CommandXboxController(OperatorConstants.kDriverControllerPort);
+    //-----------------------------------------------------------------------------------------------------------------------------
 
+    //-------------------------------------------Subsystems------------------------------------------------------------------------
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    
+    public final AlgaeIntake m_algaeIntake = new AlgaeIntake();
+    
+    public final CoralIntake m_coralIntake = new CoralIntake();
+    //-----------------------------------------------------------------------------------------------------------------------------
+
+    //-------------------------------------------Commands--------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------------------
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
