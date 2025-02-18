@@ -19,8 +19,6 @@ public class CoralIntake extends SubsystemBase{
 
     private TalonFX m_motor = new TalonFX(10);
 
-    private CoralIntakeWrist m_wrist = new CoralIntakeWrist();
-
     private double m_velo = 0.0;
     private boolean m_enabled = false;
 

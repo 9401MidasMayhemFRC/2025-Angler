@@ -9,6 +9,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -19,10 +20,10 @@ public class AlgaeIntake extends SubsystemBase {
 
     private TalonFX m_motor = new TalonFX(11);
 
-    private AlgaeIntakeWrist m_wrist = new AlgaeIntakeWrist();
-
     private double m_velo = 0.0;
     private boolean m_enabled = false;
+
+    private StatusSignal<Current> amps = m_motor.getStatorCurrent();
 
     private MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(m_velo);
     
@@ -66,6 +67,10 @@ public class AlgaeIntake extends SubsystemBase {
         return new InstantCommand(()-> disable());
     }
 
+    public double getCurrent(){
+        return amps.refresh().getValueAsDouble();
+    }
+
     @Override
     public void periodic() {
         if(m_enabled){
@@ -76,6 +81,8 @@ public class AlgaeIntake extends SubsystemBase {
 
         StatusSignal<AngularVelocity> velo = m_motor.getVelocity().refresh();
         SmartDashboard.putNumber("Algae Intake Velo.", velo.getValueAsDouble());
+
+        SmartDashboard.putNumber("Algae Intake Current", getCurrent());
 
         StatusSignal<AngularAcceleration> acc = m_motor.getAcceleration().refresh();
         SmartDashboard.putNumber("Algae Intake Acc.", acc.getValueAsDouble());

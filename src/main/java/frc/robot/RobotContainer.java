@@ -31,7 +31,8 @@ public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed aka 4.87 mps
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
-    private double SlewRate;
+    private double TranslationSlewRate = 1.0;
+    private double RotationalSlewRate = 1.0;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -53,8 +54,10 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     
     public final AlgaeIntake m_algaeIntake = new AlgaeIntake();
+    public final AlgaeIntakeWrist m_algaeWrist = new AlgaeIntakeWrist();
 
     public final CoralIntake m_coralIntake = new CoralIntake();
+    public final CoralIntakeWrist m_coralWrist = new CoralIntakeWrist();
     //-----------------------------------------------------------------------------------------------------------------------------
 
     //-------------------------------------------Commands--------------------------------------------------------------------------
@@ -76,9 +79,9 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-m_driverController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-m_driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-m_driverController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX((-m_driverController.getLeftY() * MaxSpeed) * TranslationSlewRate) // Drive forward with negative Y (forward)
+                    .withVelocityY((-m_driverController.getLeftX() * MaxSpeed) * TranslationSlewRate) // Drive left with negative X (left)
+                    .withRotationalRate((-m_driverController.getRightX() * MaxAngularRate) * RotationalSlewRate) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -86,13 +89,6 @@ public class RobotContainer {
         m_driverController.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-m_driverController.getLeftY(), -m_driverController.getLeftX()))
         ));
-
-        m_driverController.pov(0).whileTrue(drivetrain.applyRequest(() ->
-            forwardStraight.withVelocityX(0.5).withVelocityY(0))
-        );
-        m_driverController.pov(180).whileTrue(drivetrain.applyRequest(() ->
-            forwardStraight.withVelocityX(-0.5).withVelocityY(0))
-        );
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -103,6 +99,10 @@ public class RobotContainer {
 
         // reset the field-centric heading on left bumper press
         m_driverController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+        m_driverController.rightBumper().whileTrue(new AccuateAlgaeIntake(m_algaeIntake, m_algaeWrist, 0.0, 25.0));
+
+        m_driverController.pov(0).onTrue(new TestRobotCommandedMovement(drivetrain, forwardStraight, 0.5, 0.0, 0.0));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }

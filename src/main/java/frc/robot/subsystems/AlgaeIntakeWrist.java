@@ -21,6 +21,7 @@ public class AlgaeIntakeWrist extends SubsystemBase{
     private TalonFX m_motor = new TalonFX(12);
 
     private double m_pose = 0.0;
+    private StatusSignal<Angle> pose = m_motor.getPosition();
     private boolean m_enabled = true;
 
     private MotionMagicVoltage m_request = new MotionMagicVoltage(m_pose); 
@@ -35,6 +36,10 @@ public class AlgaeIntakeWrist extends SubsystemBase{
 
     public void setPose(double pose){
         m_pose = pose;
+    }
+
+    public double getPose(){
+        return pose.refresh().getValueAsDouble();
     }
 
     public Command setposeCMD (double pose){
