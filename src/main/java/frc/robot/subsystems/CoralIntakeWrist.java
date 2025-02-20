@@ -15,15 +15,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs.CoralIntakeWristConfig;
+import frc.robot.Constants.CoralIntakeCANIds;
 
 public class CoralIntakeWrist extends SubsystemBase{
 
-    private TalonFX m_motor = new TalonFX(9);
+    private TalonFX m_motor = new TalonFX(CoralIntakeCANIds.kCoralWrist);
 
     private boolean m_enabled = true;
     private double m_pose = 0.0;
 
     private MotionMagicVoltage m_request = new MotionMagicVoltage(m_pose);
+
+    private StatusSignal<Angle> pose = m_motor.getPosition();
 
     public CoralIntakeWrist(){
         m_motor.setPosition(0.0);
@@ -63,6 +66,10 @@ public class CoralIntakeWrist extends SubsystemBase{
     public Command disableCMD(){
        return new InstantCommand(()-> disable()); 
     }
+    
+    public double getPose(){
+        return pose.refresh().getValueAsDouble();
+    }
 
     @Override
     public void periodic() {
@@ -72,8 +79,7 @@ public class CoralIntakeWrist extends SubsystemBase{
             m_motor.stopMotor();
         }
 
-        StatusSignal<Angle> pose = m_motor.getPosition().refresh();
-        SmartDashboard.putNumber("Coral Wrist Pose.", pose.getValueAsDouble());
+        SmartDashboard.putNumber("Coral Wrist Pose.", pose.refresh().getValueAsDouble());
 
         StatusSignal<AngularVelocity> velo = m_motor.getVelocity().refresh();
         SmartDashboard.putNumber("Coral Wrist Velo.", velo.getValueAsDouble());

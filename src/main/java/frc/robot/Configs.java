@@ -8,6 +8,9 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.pathplanner.lib.config.RobotConfig;
+
+import edu.wpi.first.math.geometry.Translation2d;
 
 public class Configs {
     public static class AlgaeIntakeWristConfig extends TalonFXConfiguration{

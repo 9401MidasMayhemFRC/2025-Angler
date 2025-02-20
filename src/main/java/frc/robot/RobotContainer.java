@@ -12,12 +12,15 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import au.grapplerobotics.LaserCan;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Constants.ElevatorCANIds;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.generated.TunerConstants;
 
@@ -60,6 +63,10 @@ public class RobotContainer {
     public final CoralIntakeWrist m_coralWrist = new CoralIntakeWrist();
     //-----------------------------------------------------------------------------------------------------------------------------
 
+    //--------------------------------------------Triggers-------------------------------------------------------------
+    //public Trigger cupholder = new Trigger(Elevator::getCupholder);
+    //-----------------------------------------------------------------------------------------------------------------------------
+
     //-------------------------------------------Commands--------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------------------------------------------------
 
@@ -98,9 +105,8 @@ public class RobotContainer {
         m_driverController.start().and(m_driverController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        m_driverController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
-        m_driverController.rightBumper().whileTrue(new AccuateAlgaeIntake(m_algaeIntake, m_algaeWrist, 0.0, 25.0));
+        m_driverController.leftBumper().onTrue(new IntakeCoral(m_coralIntake,m_coralWrist));
+        m_driverController.rightBumper().whileTrue(new IntakeAlgae(m_algaeIntake, m_algaeWrist));
 
         m_driverController.pov(0).onTrue(new TestRobotCommandedMovement(drivetrain, forwardStraight, 0.5, 0.0, 0.0));
 

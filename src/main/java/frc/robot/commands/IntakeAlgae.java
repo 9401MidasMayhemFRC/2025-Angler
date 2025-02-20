@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.AlgaeIntake;
 import frc.robot.subsystems.AlgaeIntakeWrist;
 
-public class AccuateAlgaeIntake extends Command {
+public class IntakeAlgae extends Command {
 
     AlgaeIntake m_intake;
     AlgaeIntakeWrist m_wrist;
@@ -12,15 +12,12 @@ public class AccuateAlgaeIntake extends Command {
     boolean m_finished = false;
     boolean inPose = false;
 
-    double m_poseSetpoint;
-    double m_veloSetpoint;
+    double m_poseSetpoint = 0.0;
+    double m_veloSetpoint = 15.0;
 
-    public AccuateAlgaeIntake(AlgaeIntake intake, AlgaeIntakeWrist wrist, double poseSetpoint, double veloSetpoint){
+    public IntakeAlgae(AlgaeIntake intake, AlgaeIntakeWrist wrist){
         m_intake = intake;
         m_wrist = wrist;
-
-        m_poseSetpoint = poseSetpoint;
-        m_veloSetpoint = veloSetpoint;
 
         addRequirements(m_intake,m_wrist);
     }

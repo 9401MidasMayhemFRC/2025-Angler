@@ -16,4 +16,21 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  public static class AlgaeIntakeCANIds{
+    public static final int kAlgaeIntake = 9;
+    public static final int kAlgaeWrist = 10;
+  }
+
+  public static class CoralIntakeCANIds {
+    public static final int kCoralLaserCAN = 25;
+    public static final int kCoralIntake = 11;
+    public static final int kCoralWrist = 12;
+  }
+
+  public static class ElevatorCANIds {
+    public static final int kCupholderLaserCAN = 26;
+    public static final int kElevator = 13;
+    public static final int kClaw = 14;
+  }
 }

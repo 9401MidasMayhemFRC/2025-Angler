@@ -15,10 +15,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs.AlgaeIntakeConfig;
+import frc.robot.Constants.AlgaeIntakeCANIds;
 
 public class AlgaeIntake extends SubsystemBase {
 
-    private TalonFX m_motor = new TalonFX(11);
+    private TalonFX m_motor = new TalonFX(AlgaeIntakeCANIds.kAlgaeIntake);
 
     private double m_velo = 0.0;
     private boolean m_enabled = false;
