@@ -15,11 +15,12 @@ package frc.robot;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final double kDeadband = 0.1;
   }
 
   public static class AlgaeIntakeCANIds{
-    public static final int kAlgaeIntake = 9;
-    public static final int kAlgaeWrist = 10;
+    public static final int kAlgaeIntake = 10;
+    public static final int kAlgaeWrist = 9;
   }
 
   public static class CoralIntakeCANIds {

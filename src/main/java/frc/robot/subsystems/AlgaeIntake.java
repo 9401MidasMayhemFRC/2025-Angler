@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -10,6 +9,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -21,51 +21,24 @@ public class AlgaeIntake extends SubsystemBase {
 
     private TalonFX m_motor = new TalonFX(AlgaeIntakeCANIds.kAlgaeIntake);
 
-    private double m_velo = 0.0;
-    private boolean m_enabled = false;
+    private double m_volts = 0.0;
 
     private StatusSignal<Current> amps = m_motor.getStatorCurrent();
 
-    private MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(m_velo);
     
     public AlgaeIntake(){
 
         m_motor.getConfigurator().apply(new TalonFXConfiguration());
-        m_motor.getConfigurator().apply(new AlgaeIntakeConfig(80.0, 70.0, 400.0, 4000.0, InvertedValue.Clockwise_Positive, NeutralModeValue.Brake));
+        m_motor.getConfigurator().apply(new AlgaeIntakeConfig(80.0, 70.0, InvertedValue.Clockwise_Positive, NeutralModeValue.Brake));
 
     }
 
-    public void setVelo(double velo){
-        m_velo = velo;
+    public void setVolts(double volts){
+        m_volts = volts;
     }
     
-    public Command setVeloCMD(double velo){
-        return new InstantCommand(()-> setVelo(velo));
-    }
-
-    public void enable(){
-        m_enabled = true;
-    }
-
-    public Command enableCMD(){
-        return new InstantCommand(()-> enable());
-    }
-
-    public void enable(double velo){
-        setVelo(velo);
-        m_enabled = true;
-    }
-
-    public Command enableCMD(double velo){
-        return new InstantCommand(()-> enable(velo));
-    }
-
-    public void disable(){
-        m_enabled = false;
-    }
-
-    public Command disableCMD(){
-        return new InstantCommand(()-> disable());
+    public Command setVoltsCMD(double volts){
+        return new InstantCommand(()-> setVolts(volts));
     }
 
     public double getCurrent(){
@@ -74,11 +47,10 @@ public class AlgaeIntake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if(m_enabled){
-            m_motor.setControl(m_request.withVelocity(m_velo));
-        } else {
-            m_motor.stopMotor();
-        }
+        m_motor.setVoltage(m_volts);
+
+        StatusSignal<Voltage> volts = m_motor.getMotorVoltage().refresh();
+        SmartDashboard.putNumber("Algae Intake Volts", volts.getValueAsDouble());
 
         StatusSignal<AngularVelocity> velo = m_motor.getVelocity().refresh();
         SmartDashboard.putNumber("Algae Intake Velo.", velo.getValueAsDouble());

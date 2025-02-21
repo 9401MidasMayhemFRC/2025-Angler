@@ -3,7 +3,6 @@ package frc.robot.commands;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.CoralIntakeCANIds;
 import frc.robot.subsystems.CoralIntake;
@@ -11,8 +10,8 @@ import frc.robot.subsystems.CoralIntakeWrist;
 
 public class IntakeCoral extends Command{
 
-    private final double m_intakePoseSetpoint = 0.0;
-    private final double m_intakeVeloSetpoint = 15.0;
+    private final double m_intakePoseSetpoint = 17.94;
+    private final double m_intakeVoltSetpoint = 2.5;
 
     //private double m_elevatorPoseSetpoint = 0.0;
     //private double m_clawPoseSetpoint = 0.0;
@@ -49,7 +48,7 @@ public class IntakeCoral extends Command{
         m_finished = false;
         hasObject = false;
         m_wrist.setPose(m_intakePoseSetpoint);
-        m_intake.setVelo(m_intakeVeloSetpoint);
+        m_intake.setVolts(m_intakeVoltSetpoint);
         
     }
 
@@ -58,12 +57,12 @@ public class IntakeCoral extends Command{
         Measurement measurement = m_sensor.getMeasurement();
         if((measurement.distance_mm < 440.0) && (measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) && !hasObject){
             m_wrist.setPose(0.0);
-            m_intake.setVelo(0.0);
+            m_intake.setVolts(0.0);
             hasObject = true;
         }
 
         if(hasObject && (m_wrist.getPose() <= 2.5)){
-            m_intake.setVelo(m_intakeVeloSetpoint);
+            m_intake.setVolts(m_intakeVoltSetpoint);
 
             if(measurement.status != LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT){
                 m_finished = true;
@@ -81,7 +80,7 @@ public class IntakeCoral extends Command{
 
     @Override
     public void end(boolean interrupted) {
-        m_intake.setVelo(0.0);
+        m_intake.setVolts(-0.5);
         m_wrist.setPose(0.0);
     }
     

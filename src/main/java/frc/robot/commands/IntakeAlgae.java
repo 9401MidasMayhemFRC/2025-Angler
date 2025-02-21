@@ -13,7 +13,7 @@ public class IntakeAlgae extends Command {
     boolean inPose = false;
 
     double m_poseSetpoint = 0.0;
-    double m_veloSetpoint = 15.0;
+    double m_voltSetpoint = 2.5;
 
     public IntakeAlgae(AlgaeIntake intake, AlgaeIntakeWrist wrist){
         m_intake = intake;
@@ -35,7 +35,7 @@ public class IntakeAlgae extends Command {
     public void execute() {
 
         if(m_wrist.getPose() >= (m_poseSetpoint - 2.5)){
-            m_intake.setVelo(m_veloSetpoint);
+            m_intake.setVolts(m_voltSetpoint);
 
             inPose = true;
         }
@@ -56,7 +56,7 @@ public class IntakeAlgae extends Command {
     @Override
     public void end(boolean interrupted) {
 
-        m_intake.setVelo(0.0);
+        m_intake.setVolts(0.0);
         m_wrist.setPose(0.0);
         
     }

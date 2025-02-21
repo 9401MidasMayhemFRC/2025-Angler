@@ -21,7 +21,6 @@ public class CoralIntakeWrist extends SubsystemBase{
 
     private TalonFX m_motor = new TalonFX(CoralIntakeCANIds.kCoralWrist);
 
-    private boolean m_enabled = true;
     private double m_pose = 0.0;
 
     private MotionMagicVoltage m_request = new MotionMagicVoltage(m_pose);
@@ -31,7 +30,7 @@ public class CoralIntakeWrist extends SubsystemBase{
     public CoralIntakeWrist(){
         m_motor.setPosition(0.0);
         m_motor.getConfigurator().apply(new TalonFXConfiguration());
-        m_motor.getConfigurator().apply(new CoralIntakeWristConfig(60.0, 55.0, 160.0, 80.0, InvertedValue.Clockwise_Positive, NeutralModeValue.Brake));
+        m_motor.getConfigurator().apply(new CoralIntakeWristConfig(60.0, 55.0, 160.0, 80.0,100.0,-0.5, InvertedValue.Clockwise_Positive, NeutralModeValue.Brake));
     }
 
     public void setPose(double pose){
@@ -41,31 +40,6 @@ public class CoralIntakeWrist extends SubsystemBase{
     public Command setPoseCMD(double pose){
         return new InstantCommand(()-> setPose(pose));
     }
-
-    public void enable(){
-        m_enabled = true;
-    }
-
-    public Command enableCMD(){
-        return new InstantCommand(()-> enable());
-    }
-
-    public void enable(double pose){
-        setPose(pose);
-        m_enabled = true;
-    }
-
-    public Command enableCMD(double pose){
-        return new InstantCommand(()-> enable(pose));
-    }
-
-    public void disable(){
-        m_enabled = false;
-    }
-
-    public Command disableCMD(){
-       return new InstantCommand(()-> disable()); 
-    }
     
     public double getPose(){
         return pose.refresh().getValueAsDouble();
@@ -73,11 +47,7 @@ public class CoralIntakeWrist extends SubsystemBase{
 
     @Override
     public void periodic() {
-        if(m_enabled){
-            m_motor.setControl(m_request.withPosition(m_pose));
-        } else {
-            m_motor.stopMotor();
-        }
+        m_motor.setControl(m_request.withPosition(m_pose));
 
         SmartDashboard.putNumber("Coral Wrist Pose.", pose.refresh().getValueAsDouble());
 

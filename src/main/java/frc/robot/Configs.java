@@ -1,16 +1,13 @@
 package frc.robot;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.pathplanner.lib.config.RobotConfig;
-
-import edu.wpi.first.math.geometry.Translation2d;
 
 public class Configs {
     public static class AlgaeIntakeWristConfig extends TalonFXConfiguration{
@@ -20,12 +17,15 @@ public class Configs {
      * @param supplyLimit Supply current limit of motor
      * @param acc Accerlation of MotionMagic in rps/s
      * @param velo Accerlation of MotionMagic in rps
+     * @param ForwardSoftLimit Soft Limit in the forward direction of the motor
+     * @param ReverseSoftLimit Soft Limit in the reverse direction of the motor
      */
-    public AlgaeIntakeWristConfig(double statorLimit, double supplyLimit, double acc, double velo, InvertedValue inverted, NeutralModeValue stopType){
+    public AlgaeIntakeWristConfig(double statorLimit, double supplyLimit, double acc, double velo, double ForwardSoftLimit, double ReverseSoftLimit, InvertedValue inverted, NeutralModeValue stopType){
       this.CurrentLimits = new AlgaeIntakeWristCurrentConfig(statorLimit,supplyLimit);
       this.MotionMagic = new AlgaeIntakeWristMotionMagicConfig(acc, velo);
       this.MotorOutput = new AlgaeIntakeWristMotorOutputConfig(inverted, stopType);
       this.Slot0 = new AlgaeIntakeWrist_PID_Config();
+      this.SoftwareLimitSwitch = new AlgaeIntakeWristSoftLimits(ForwardSoftLimit, ReverseSoftLimit);
     }
 
     private static class AlgaeIntakeWristCurrentConfig extends CurrentLimitsConfigs{
@@ -56,6 +56,16 @@ public class Configs {
       }
     }
 
+    private static class AlgaeIntakeWristSoftLimits extends SoftwareLimitSwitchConfigs{
+      private AlgaeIntakeWristSoftLimits(double ForwardSoftLimit, double ReverseSoftLimit){
+        this.ForwardSoftLimitThreshold = ForwardSoftLimit;
+        this.ForwardSoftLimitEnable = true;
+
+        this.ReverseSoftLimitThreshold = ForwardSoftLimit;
+        this.ReverseSoftLimitEnable = true;
+      }
+    }
+
     private static class AlgaeIntakeWrist_PID_Config extends Slot0Configs{
       
       private AlgaeIntakeWrist_PID_Config(){
@@ -77,12 +87,15 @@ public class Configs {
      * @param supplyLimit Supply current limit of motor
      * @param acc Accerlation of MotionMagic in rps/s
      * @param velo Accerlation of MotionMagic in rps
+     * @param ForwardSoftLimit Soft Limit in the forward direction of the motor
+     * @param ReverseSoftLimit Soft Limit in the reverse direction of the motor
      */
-    public CoralIntakeWristConfig(double statorLimit, double supplyLimit, double acc, double velo, InvertedValue inverted, NeutralModeValue stopType){
+    public CoralIntakeWristConfig(double statorLimit, double supplyLimit, double acc, double velo, double ForwardSoftLimit, double ReverseSoftLimit, InvertedValue inverted, NeutralModeValue stopType){
       this.CurrentLimits = new CoralIntakeWristCurrentConfig(statorLimit,supplyLimit);
       this.MotionMagic = new CoralIntakeWristMotionMagicConfig(acc, velo);
       this.MotorOutput = new CoralIntakeWristMotorOutputConfig(inverted, stopType);
       this.Slot0 = new CoralIntakeWrist_PID_Config();
+      this.SoftwareLimitSwitch = new CoralIntakeWristSoftLimits(ForwardSoftLimit,ReverseSoftLimit);
     }
 
     private static class CoralIntakeWristCurrentConfig extends CurrentLimitsConfigs{
@@ -113,6 +126,16 @@ public class Configs {
       }
     }
 
+    private static class CoralIntakeWristSoftLimits extends SoftwareLimitSwitchConfigs{
+      private CoralIntakeWristSoftLimits(double ForwardSoftLimit, double ReverseSoftLimit){
+        this.ForwardSoftLimitThreshold = ForwardSoftLimit;
+        this.ForwardSoftLimitEnable = true;
+
+        this.ReverseSoftLimitThreshold = ForwardSoftLimit;
+        this.ReverseSoftLimitEnable = true;
+      }
+    }
+
     private static class CoralIntakeWrist_PID_Config extends Slot0Configs{
       
       private CoralIntakeWrist_PID_Config(){
@@ -135,9 +158,8 @@ public class Configs {
      * @param acc Target Accerlation of MotionMagic in rps/s
      * @param velo Target jerk of MotionMagic in rps/s/s
      */
-    public AlgaeIntakeConfig(double statorLimit, double supplyLimit, double acc, double jerk, InvertedValue inverted, NeutralModeValue stopType){
+    public AlgaeIntakeConfig(double statorLimit, double supplyLimit, InvertedValue inverted, NeutralModeValue stopType){
       this.CurrentLimits = new AlgaeIntakeCurrentConfig(statorLimit,supplyLimit);
-      this.MotionMagic = new AlgaeIntakeMotionMagicConfig(acc, jerk);
       this.MotorOutput = new AlgaeIntakeMotorOutputConfig(inverted, stopType);
       this.Slot0 = new AlgaeIntake_PID_Config();
     }
@@ -152,14 +174,6 @@ public class Configs {
         this.SupplyCurrentLimitEnable = true;
       }
 
-    }
-
-    private static class AlgaeIntakeMotionMagicConfig extends MotionMagicConfigs{
-
-      private AlgaeIntakeMotionMagicConfig(double acc, double jerk){
-        this.MotionMagicAcceleration = acc;
-        this.MotionMagicJerk = jerk;
-      }
     }
 
     private static class AlgaeIntakeMotorOutputConfig extends MotorOutputConfigs{
@@ -191,9 +205,8 @@ public class Configs {
      * @param acc Target Accerlation of MotionMagic in rps/s
      * @param velo Target jerk of MotionMagic in rps/s/s
      */
-    public CoralIntakeConfig(double statorLimit, double supplyLimit, double acc, double jerk, InvertedValue inverted, NeutralModeValue stopType){
+    public CoralIntakeConfig(double statorLimit, double supplyLimit, InvertedValue inverted, NeutralModeValue stopType){
       this.CurrentLimits = new CoralIntakeCurrentConfig(statorLimit,supplyLimit);
-      this.MotionMagic = new CoralIntakeMotionMagicConfig(acc, jerk);
       this.MotorOutput = new CoralIntakeMotorOutputConfig(inverted, stopType);
       this.Slot0 = new CoralIntake_PID_Config();
     }
@@ -208,14 +221,6 @@ public class Configs {
         this.SupplyCurrentLimitEnable = true;
       }
 
-    }
-
-    private static class CoralIntakeMotionMagicConfig extends MotionMagicConfigs{
-
-      private CoralIntakeMotionMagicConfig(double acc, double jerk){
-        this.MotionMagicAcceleration = acc;
-        this.MotionMagicJerk = jerk;
-      }
     }
 
     private static class CoralIntakeMotorOutputConfig extends MotorOutputConfigs{
