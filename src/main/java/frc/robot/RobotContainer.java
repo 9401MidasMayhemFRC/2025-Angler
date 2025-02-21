@@ -23,6 +23,7 @@ import frc.robot.subsystems.*;
 
 import frc.robot.commands.*;
 
+@SuppressWarnings("unused")
 public class RobotContainer {
 
     //--------------------------------------------Swerve---------------------------------------------------------------------------------
